@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define MAX 20
+#define MAX (20)
+#define MAX_ROW (100)
 
 typedef struct _student
 {
@@ -11,40 +12,53 @@ typedef struct _student
   char prezime[20];
 } student;
 
-int brojRedova(FILE*);
+int brojRedova(char[MAX]);
 
 int main () {
-        float aps;
-        int br=0, i=0, max=0;
-        char row[100];
-        student S;
-        FILE *ulz;
-        student* niz = NULL;
+    float aps;
+    int br=0,i=0,max=0;
+    char FileName[MAX] = "studenti.txt";
+    student S;
+    FILE *ulz;
+    student* niz = NULL;
 
-        ulz = fopen("studenti.txt", "r");
+    br = brojRedova(FileName);
+    niz = (student*)malloc(br * sizeof(student));
 
-        while( fgets(row, 100, ulz) ) {
-          br++;
-        }
+    ulz = fopen("studenti.txt", "r");
+    rewind(ulz);
 
-        niz = (student*)malloc(br * sizeof(student));
+     while(!feof(ulz))
+     {
+       fscanf(ulz, "%d %s %s", &S.bod, S.ime, S.prezime);
+       niz[i] = S;
+       if(S.bod>=max) max = S.bod;
+       i++;
+     }
 
-        rewind(ulz);
+     for(i=0; i<br; i++) {
+       aps = (float)niz[i].bod/max*100;
 
-        while(!feof(ulz))
-        {
-          fscanf(ulz, "%d %s %s", &S.bod, S.ime, S.prezime);
-          niz[i] = S;
-          if(S.bod>=max) max = S.bod;
-          i++;
-        }
+       printf("%d %s %s --- %.2f\n", niz[i].bod, niz[i].ime, niz[i].prezime, aps);
+     }
 
-        for(i=0; i<br; i++){
+     fclose(ulz);
 
-          aps = (float)niz[i].bod/max*100;
+     return 0;
+}
 
-          printf("%d %s %s --- %.2f\n", niz[i].bod, niz[i].ime, niz[i].prezime, aps);
-        }
+int brojRedova(char FileName[MAX])
+{
+    int br=0;
+    char row[MAX_ROW];
 
-        return 0;
+    FILE *ulz;
+    ulz = fopen(FileName, "r");
+
+    while( fgets(row, 100, ulz) ) {
+      br++;
+    }
+
+     fclose(ulz);
+     return br;
 }
