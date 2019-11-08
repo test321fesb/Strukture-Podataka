@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #define MAX (32)
+#define MAX_ROW (128)
 
 typedef struct _osoba
 {
@@ -29,6 +30,8 @@ int Ispis(node*);
 int brisanje(node**);
 int IspisiMenu();
 int IspisiOsobu(node*);
+int UpisUdat(node**);
+int CitajDat();
 
 int main()
 {
@@ -62,6 +65,12 @@ int main()
 		case 7:
 			DodajIspred(&head);
 			break;
+		case 8:
+		    UpisUdat(&head);
+			break;
+		case 9:
+		    CitajDat();
+		    break;
 		case 0:
 			printf("\n\tGOODBYE\n");
 			return 0;
@@ -212,6 +221,7 @@ int IspisiMenu()
 	printf(" 5 - Ispis\n");
 	printf(" 6 - Dodaj Iza\n");
 	printf(" 7 - DodajIspred\n");
+	printf(" 8 - Upis u datoteku\n");
 	printf("\nVas izbor: ");
 }
 
@@ -300,4 +310,46 @@ int DodajIspred(node** head)
         TempNode->next=Temp;
         return 0;
     }
+}
+
+int UpisUdat(node** head)
+{
+    node* TempNode=*head;
+    FILE *ulz;
+    if(ulz == NULL)
+    {
+        printf("\n\tGreska u otvaranju datoteke\n");
+        return 0;
+    }
+    
+    ulz=fopen("osobe.txt","a");
+    
+    while(TempNode!=NULL)
+    {
+        fprintf(ulz,"%s %s %d\n",TempNode->podatci.ime,TempNode->podatci.prezime,TempNode->podatci.godiste);
+        TempNode=TempNode->next;
+    }
+    fclose(ulz);
+    printf("\n\tOsobe upisane!\n");
+    return 0;
+}
+int CitajDat()
+{
+    FILE *ilz;
+    char row[MAX_ROW];
+    
+    if(ilz == NULL)
+    {
+        printf("\n\tGreska u otvaranju datoteke\n");
+        return 0;
+    }
+    
+    ilz = fopen("osobe.txt","r");
+    
+    while( fgets(row, 100, ilz) )
+    {
+        printf("%s",row);
+    }
+    fclose(ilz);
+    return 0;
 }
