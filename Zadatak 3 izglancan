@@ -226,10 +226,10 @@ int IspisiMenu()
 	printf(" 4 - Dodaj Ispred\n");
 	printf(" 5 - Pronalazak\n");
 	printf(" 6 - Brisanje osobe\n");
-  printf(" 7 - Sortiraj po prezimenima\n");
+  	printf(" 7 - Sortiraj po prezimenima\n");
 	printf(" 8 - Ispis\n");
 	printf(" 9 - Upis u datoteku\n");
-  printf("10 - Iscitaj iz datoteke\n");
+  	printf("10 - Iscitaj iz datoteke\n");
 	printf("\nVas izbor: ");
 }
 
