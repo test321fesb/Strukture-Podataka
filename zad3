@@ -23,6 +23,7 @@ int DodajIza(node**);
 int DodajIspred(node**);
 int UnosPodataka(node*);
 node* KreirajNode();
+node* PronalaziPredhodnika(node**);
 int PronalaziPrezime(node**);
 int Ispis(node*);
 int brisanje(node**);
@@ -58,6 +59,12 @@ int main()
 		case 6:
 			DodajIza(&head);
 			break;
+		case 7:
+			DodajIspred(&head);
+			break;
+		case 0:
+			printf("\n\tGOODBYE\n");
+			return 0;
 		default:
 			printf("\n--Pogresan unos!--\n");
 		}
@@ -203,6 +210,8 @@ int IspisiMenu()
 	printf(" 3 - Brisanje osobe\n");
 	printf(" 4 - Pronalazak\n");
 	printf(" 5 - Ispis\n");
+	printf(" 6 - Dodaj Iza\n");
+	printf(" 7 - DodajIspred\n");
 	printf("\nVas izbor: ");
 }
 
@@ -240,29 +249,55 @@ int DodajIza(node** head)
 	return 0;
 }
 
-int DodajIspred(node** head)
+node* PronalaziPredhodnika(node** head)
 {
-	node* TempNode = *head;
-	node* TempPrev;
+    node* TempNode = *head;
+	node* TempNodePrev;
 	char TempPrez[MAX];
-
-	printf("\nUnesi trazeno prezime: ");
-	scanf("%s", TempPrez);
-
-	while (TempNode != NULL)
+	
+	if (TempNode == NULL) {
+		printf("Lista je prazna.\n");
+		return 0;
+	}
+	
+	printf("\nUnesi prezime trazene osobe: ");
+	scanf("%s",TempPrez);
+	
+    if (strcmp(TempNode->podatci.prezime, TempPrez) == 0)
+	{
+		return NULL;
+	}
+    
+    while (TempNode != NULL)
 	{
 		if (strcmp(TempNode->podatci.prezime, TempPrez) == 0) {
-
-			Temp = KreirajNode();
-			Temp->next = TempNode->next;
-			TempNode->next = Temp;
-			return 0;
+		    printf("\n%s %s %d\n",TempNodePrev->podatci.ime,TempNodePrev->podatci.prezime,TempNodePrev->podatci.godiste);
+			return TempNodePrev;
 		}
-
-
+		TempNodePrev = TempNode;
 		TempNode = TempNode->next;
 	}
-
-	printf("Ne postoji trazena osoba. Unesite neku drugu.\n");
+	printf("Ne postoji trazena osoba.\n");
 	return 0;
+}
+
+int DodajIspred(node** head)
+{
+    node* TempNode;
+    node* Temp;
+    
+    TempNode=PronalaziPredhodnika(head);
+    
+    if(TempNode==NULL) 
+    {
+        DodajPocetak(head);
+        return 0;
+    }
+    else
+    {
+        Temp = KreirajNode();
+        Temp->next=TempNode->next;
+        TempNode->next=Temp;
+        return 0;
+    }
 }
