@@ -33,7 +33,7 @@ int main()
 	printf(" AAA ");
 	
 	
-	node* Temp = &HeadP1;
+	node* Temp = HeadP1.next;
 	while(Temp!=NULL){
 	    printf("%d %d\n",Temp->data.coefficient,Temp->data.power);
 	    Temp=Temp->next;
@@ -51,13 +51,16 @@ node* CreateNode()
 		printf("\n\tError 124-6: Memory Allocation Error!\n");
 		return NULL;
 	}
-    else return Temp;
+    else{
+        Temp->next=NULL;
+        return Temp;
+    }
 }
 
 int CreatePolynom(char* row,node* head)
 {
     node* NewNode=NULL;
-    int i=0,length=0,NumberPosition=0;
+    int i=0,length=0,NumberPosition=0,NumberCounter=0;
     length=1+strlen(row);
     
     for(i=0;i<length/4;i++){
@@ -66,8 +69,8 @@ int CreatePolynom(char* row,node* head)
             printf("\n\tError 124-6.2: Polynom Not Fully Loaded!\n\tExiting The Function!\n");
             free(NewNode);break;
         }
-        sscanf(row+NumberPosition,"%d %d",&NewNode->data.coefficient,&NewNode->data.power);
-        NumberPosition+=4;
+        sscanf(row+NumberPosition,"%d %d%n",&NewNode->data.coefficient,&NewNode->data.power,&NumberCounter);
+        NumberPosition+=NumberCounter;
         SortNumber(head, NewNode);
     }
 }
@@ -94,19 +97,21 @@ int LoadPolynom(node* HeadP1,node* HeadP2)
 
 int SortNumber(node* head, node* SortNode)
 {
+    head=SortNode;
+    SortNode->next = NULL;
     node* TempNode=head;
+    /*
     if(head==NULL){
         SortNode->next=NULL;
         head=SortNode;
         return 1;
     }
-    else{
-        while(TempNode!=NULL){
-            CompareNodes(TempNode,SortNode);
-            TempNode=TempNode->next;
-        }
-        return 2;
+    */
+    while(TempNode!=NULL){
+        CompareNodes(TempNode,SortNode);
+        TempNode=TempNode->next;
     }
+    return 0;
 }
 
 int CompareNodes(node* TempNode, node* SortNode)
@@ -147,4 +152,3 @@ int PrintBothPolynoms(node* HeadP1, node* HeadP2)
         puts(" + ");
     }
 }
-
