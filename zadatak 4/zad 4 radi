@@ -38,15 +38,21 @@ node* PolynomSum(node* ,node*);   //promjena - suma
 node* CreateSum(node*, node*);
 node* DuplicateNode(node*);
 
+
+node* Product(node*, node*);
+int CheckForPower(node*, node*);
+node* PolynomProduct(node*, node*);
+
 int main()
 {
 	FILE *ulz = NULL;
 	char row[ROW_MAX];
 
-	node HeadP1, HeadP2, HeadSum;   //promjena - suma
+	node HeadP1, HeadP2, HeadSum, HeadProduct;   //promjena - suma
 	HeadP1.next = NULL;
 	HeadP2.next = NULL;
 	HeadSum.next = NULL;            //promjena - suma
+	HeadProduct.next = NULL;
 
 	ulz = fopen("polinomi.txt", "r");
 	if (ulz == NULL)
@@ -69,6 +75,10 @@ int main()
 	printf("\nSuma\n");                     //promjena - suma
     HeadSum.next = PolynomSum(HeadP1.next,HeadP2.next);
 	printPolynom(&HeadSum);
+	
+	printf("\nProdukt\n");                     //promjena - suma
+    HeadProduct.next = PolynomProduct(HeadP1.next,HeadP2.next);
+	printPolynom(&HeadProduct);
 
 
 	return 0;
@@ -194,22 +204,22 @@ node* PolynomSum(node* Head1,node* Head2)
     node* TempHead2 = Head2;
     node* polynom = NULL;
     
-    while(TempHead1!=NULL || TempHead2!=NULL){
+    while(TempHead1!=NULL && TempHead2!=NULL){
             
         node* Temp = NULL;
             
         switch(CompareNodes(TempHead1,TempHead2))
         {
-            case 0: Temp = CreateSum(Head1,Head2);
+            case 0: Temp = CreateSum(TempHead1,TempHead2);
                     InsertAtEnd(&polynom, Temp);
                     TempHead1=TempHead1->next;
                     TempHead2=TempHead2->next;
                     break;
-            case 1: Temp = DuplicateNode(Head1);
+            case 1: Temp = DuplicateNode(TempHead1);
                     InsertAtEnd(&polynom, Temp);
                     TempHead1=TempHead1->next;
                     break;
-            case -1:Temp = DuplicateNode(Head2);
+            case -1:Temp = DuplicateNode(TempHead2);
                     InsertAtEnd(&polynom, Temp);
                     TempHead2=TempHead2->next;
                     break;
@@ -234,7 +244,6 @@ node* CreateSum(node* Head1, node* Head2)
 
 node* DuplicateNode(node* TempCopy)
 {
-    int c = 0, p = 0;
     node* TempPaste = AllocateNode();
     
     TempPaste->data=TempCopy->data;
@@ -242,3 +251,58 @@ node* DuplicateNode(node* TempCopy)
 	
     return TempPaste;
 }
+
+node* PolynomProduct(node* Head1, node* Head2)
+{
+    int check=2;
+    node* TempHead1 = Head1;
+    node* TempHead2 = Head2;
+    node* polynom = NULL;
+    
+    while(TempHead1!=NULL){
+        TempHead2 = Head2;
+        while(TempHead2!=NULL){
+            node* Temp = NULL;
+            Temp = Product(TempHead1,TempHead2);
+            check = CheckForPower(polynom,Temp);
+            if(check==1) InsertAtEnd(&polynom,Temp);
+            if(check==0){
+                InsertAtHead(&polynom,Temp);
+                SortNode(&polynom,Temp);
+            }
+            
+            TempHead2=TempHead2->next;
+        }
+        TempHead1=TempHead1->next;
+    }
+    return polynom;
+}
+
+node* Product(node* Node1, node* Node2)
+{
+    int c = 0, p = 0;
+    node* Temp = NULL;
+    
+    c = Node1->data.coefficient * Node2->data.coefficient;
+    p = Node1->data.power + Node2->data.power;
+    
+    Temp = CreateNode(c,p);
+    return Temp;
+}
+
+int CheckForPower(node* head, node* temp)
+{
+    node* TempHead = head;
+    if(TempHead == NULL) return 1;
+    while(TempHead!=NULL)
+    {
+        if(CompareNodes(TempHead,temp)==0){
+            TempHead->data.coefficient+=temp->data.coefficient;
+            free(temp);
+            return 2;
+        }
+        TempHead=TempHead->next;
+    }
+    return 0;
+}
+
