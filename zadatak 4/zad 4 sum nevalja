@@ -1,0 +1,252 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define ROW_MAX (128)
+
+typedef struct _member
+{
+	int coefficient;
+	int power;
+} member;
+
+typedef struct _node
+{
+	member data;
+	struct _node* next;
+} node;
+
+
+int AddDataToNode(node*);
+node* AllocateNode();
+int SwapNodes(node* , node*);
+int CompareNodes(node*, node*);
+int SortNode(node**, node*);
+
+node* CreateNode(int c, int p);
+
+node* CreatePolynom(char*);
+
+int InsertAtHead(node**, node*);
+
+int printPolynom(node*);
+
+
+node* PolynomSum(node* ,node*);   //promjena - suma
+node* CreateSum(node*, node*);
+node* DuplicateNode(node*);
+int CompareNodes(node*, node*);
+
+int main()
+{
+	FILE *ulz = NULL;
+	char row[ROW_MAX];
+
+	node HeadP1, HeadP2, HeadSum;   //promjena - suma
+	HeadP1.next = NULL;
+	HeadP2.next = NULL;
+	HeadSum.next = NULL;            //promjena - suma
+
+	ulz = fopen("polinomi.txt", "r");
+	if (ulz == NULL)
+	{
+		printf("\n\tError 124-5: Document Error!\n");
+	}
+
+	fgets(row, ROW_MAX, ulz);
+
+	printf("\nPrvi\n");
+	HeadP1.next = CreatePolynom(row);
+	printPolynom(&HeadP1);
+
+	fgets(row, ROW_MAX, ulz);
+
+	printf("\nDrugi\n");
+	HeadP2.next = CreatePolynom(row);
+	printPolynom(&HeadP2);
+	
+	printf("\nSuma\n");                     //promjena - suma
+	
+    printf("aaaa");
+    HeadSum.next = PolynomSum(HeadP1.next,HeadP2.next);
+    printf("\n\t\ta\n");
+	printPolynom(&HeadSum);
+    printf("\n\t\tb\n");
+
+
+	return 0;
+}
+
+node* CreatePolynom(char* row)
+{
+	int c = 0, p = 0, offset = 0;
+	node* temp = NULL;
+	node* polynom = NULL;
+
+	while( sscanf(row, "%d %d%n", &c, &p, &offset)!=EOF) {
+		temp = CreateNode(c, p);
+		InsertAtHead(&polynom, temp);
+		SortNode(&polynom, temp);
+		row = row + offset;
+	}
+
+	return polynom;
+}
+
+node* CreateNode (int c, int p) {
+
+	node* Temp = AllocateNode();
+	Temp->data.coefficient = c;
+	Temp->data.power = p;
+	Temp->next = NULL;
+
+	if (Temp)
+		return Temp;
+	else
+		return NULL;
+}
+
+node* AllocateNode()
+{
+	node* Temp = (node*)malloc(sizeof(node));
+	if(Temp == NULL)
+	{
+		printf("\n\tError 124-6: Memory Allocation Error!\n");
+		return NULL;
+	}
+  else
+		return Temp;
+}
+
+int InsertAtHead(node** head, node* new)
+{
+	if(*head == NULL) {
+		*head = new;
+		return 0;
+	}
+	new->next=(*head);
+	(*head)=new;
+	
+	if(*head) return 0;
+	else return -1;
+}
+int InsertAtEnd(node** head, node* new)
+{
+    node* temp = *head;
+	if(*head == NULL) {
+		*head = new;
+		return 0;
+	}
+	while(temp->next!=NULL)
+	    temp=temp->next;
+	temp->next=new;
+	
+	if(temp) return 0;
+	else return -1;
+}
+
+int printPolynom (node* head) {
+	node* temp = head->next;
+	if(head == NULL) {                          //head->next?
+		printf("Error: prazna lista!");
+		return -1;
+	}
+
+	printf("\nPolinom: ");
+	while (temp != NULL)
+	{
+		printf("%dx^%d", temp->data.coefficient, temp->data.power);
+		if (temp->next != NULL)
+			printf(" + ");
+		temp = temp->next;
+	}
+
+	return 0;
+}
+
+int SortNode(node** head, node* temp)
+{
+    node* TempNode = (*head)->next;
+    while(TempNode!=NULL)
+    {
+        if(CompareNodes(temp,TempNode)==1) SwapNodes(TempNode,temp);
+        TempNode=TempNode->next;
+        temp=temp->next;
+    }
+    return 0;
+}
+
+int CompareNodes(node* Node1, node* Node2)
+{
+    if(Node1->data.power>Node2->data.power) return 1;
+    else if(Node1->data.power<Node2->data.power) return -1;
+    else return 0;
+}
+
+int SwapNodes(node* TempNode, node* SortNode)
+{
+    member Temp = TempNode->data;
+    TempNode->data = SortNode->data;
+    SortNode->data = Temp;
+    return 0;
+}
+
+node* PolynomSum(node* Head1,node *Head2)
+{
+    int input=10;
+    node* TempHead1 = Head1;
+    node* TempHead2 = Head2;
+    node* polynom = NULL;
+    
+    while(TempHead1!=NULL){
+        TempHead1=TempHead1->next;
+        while(TempHead2!=NULL){
+            
+        TempHead2=TempHead2->next;
+            
+            node* Temp = NULL;
+            
+            input=CompareNodes(TempHead1,TempHead2);
+            
+            switch(input)
+            {
+                case 0: Temp = CreateSum(Head1,Head2);
+                        InsertAtEnd(&polynom, Temp);
+                        TempHead1=TempHead1->next;
+                        TempHead2=TempHead2->next;
+                        break;
+                case 1: Temp = DuplicateNode(Head1);
+                        InsertAtEnd(&polynom, Temp);
+                        TempHead1=TempHead1->next;
+                        break;
+                case -1:Temp = DuplicateNode(Head2);
+                        InsertAtEnd(&polynom, Temp);
+                        TempHead2=TempHead2->next;
+                        break;
+                default: printf("Error 134: Wrong Return Value");
+                        break;
+            }
+        }
+    }
+    return polynom;
+}
+
+node* CreateSum(node* Head1, node* Head2)
+{
+    int c = 0, p = 0;
+    node* Temp = NULL;
+    
+    p=Head1->data.power;
+    c=Head1->data.coefficient+Head2->data.coefficient;
+    
+    Temp = CreateNode(c, p);
+    return Temp;
+}
+
+node* DuplicateNode(node* TempCopy)
+{
+    int c = 0, p = 0;
+    node* TempPaste = AllocateNode();
+    TempPaste->data=TempCopy->data;
+    return TempPaste;
+}
