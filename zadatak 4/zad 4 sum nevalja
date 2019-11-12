@@ -23,7 +23,7 @@ int SwapNodes(node* , node*);
 int CompareNodes(node*, node*);
 int SortNode(node**, node*);
 
-node* CreateNode(int c, int p);
+node* CreateNode(int, int);
 
 node* CreatePolynom(char*);
 
@@ -37,7 +37,6 @@ int printPolynom(node*);
 node* PolynomSum(node* ,node*);   //promjena - suma
 node* CreateSum(node*, node*);
 node* DuplicateNode(node*);
-int CompareNodes(node*, node*);
 
 int main()
 {
@@ -68,12 +67,8 @@ int main()
 	printPolynom(&HeadP2);
 	
 	printf("\nSuma\n");                     //promjena - suma
-	
-    printf("aaaa");
     HeadSum.next = PolynomSum(HeadP1.next,HeadP2.next);
-    printf("\n\t\ta\n");
 	printPolynom(&HeadSum);
-    printf("\n\t\tb\n");
 
 
 	return 0;
@@ -171,7 +166,7 @@ int SortNode(node** head, node* temp)
     node* TempNode = (*head)->next;
     while(TempNode!=NULL)
     {
-        if(CompareNodes(temp,TempNode)==1) SwapNodes(TempNode,temp);
+        if(CompareNodes(temp,TempNode)==-1) SwapNodes(TempNode,temp);
         TempNode=TempNode->next;
         temp=temp->next;
     }
@@ -180,8 +175,8 @@ int SortNode(node** head, node* temp)
 
 int CompareNodes(node* Node1, node* Node2)
 {
-    if(Node1->data.power>Node2->data.power) return 1;
-    else if(Node1->data.power<Node2->data.power) return -1;
+    if(Node1->data.power > Node2->data.power) return 1;
+    else if(Node1->data.power < Node2->data.power) return -1;
     else return 0;
 }
 
@@ -193,38 +188,33 @@ int SwapNodes(node* TempNode, node* SortNode)
     return 0;
 }
 
-node* PolynomSum(node* Head1,node *Head2)
+node* PolynomSum(node* Head1,node* Head2)
 {
-    int input=10;
     node* TempHead1 = Head1;
     node* TempHead2 = Head2;
     node* polynom = NULL;
     
-    while(TempHead1!=NULL){
-        while(TempHead2!=NULL){
+    while(TempHead1!=NULL || TempHead2!=NULL){
             
-            node* Temp = NULL;
+        node* Temp = NULL;
             
-            input=CompareNodes(TempHead1,TempHead2);
-            
-            switch(input)
-            {
-                case 0: Temp = CreateSum(Head1,Head2);
-                        InsertAtEnd(&polynom, Temp);
-                        TempHead1=TempHead1->next;
-                        TempHead2=TempHead2->next;
-                        break;
-                case 1: Temp = DuplicateNode(Head1);
-                        InsertAtEnd(&polynom, Temp);
-                        TempHead1=TempHead1->next;
-                        break;
-                case -1:Temp = DuplicateNode(Head2);
-                        InsertAtEnd(&polynom, Temp);
-                        TempHead2=TempHead2->next;
-                        break;
-                default: printf("Error 134: Wrong Return Value");
-                        break;
-            }
+        switch(CompareNodes(TempHead1,TempHead2))
+        {
+            case 0: Temp = CreateSum(Head1,Head2);
+                    InsertAtEnd(&polynom, Temp);
+                    TempHead1=TempHead1->next;
+                    TempHead2=TempHead2->next;
+                    break;
+            case 1: Temp = DuplicateNode(Head1);
+                    InsertAtEnd(&polynom, Temp);
+                    TempHead1=TempHead1->next;
+                    break;
+            case -1:Temp = DuplicateNode(Head2);
+                    InsertAtEnd(&polynom, Temp);
+                    TempHead2=TempHead2->next;
+                    break;
+            default: printf("Error 134: Wrong Return Value");
+                    break;
         }
     }
     return polynom;
