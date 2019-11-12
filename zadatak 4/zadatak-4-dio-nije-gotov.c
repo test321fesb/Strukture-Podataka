@@ -4,6 +4,8 @@
 #include <string.h>
 #define ROW_MAX (128)
 
+int Global = 0;
+
 typedef struct _member
 {
 	int coefficient;
@@ -27,7 +29,7 @@ node* CreateNode (int c, int p);
 
 node* CreatePolynom(char*);
 
-int InsertAtEnd (node** head, node* new);
+int InsertAtHead (node** head, node* new);
 
 int printPolynom (node*);
 
@@ -68,9 +70,10 @@ node* CreatePolynom(char* row)
 	node* temp = NULL;
 	node* polynom = NULL;
 
-	while( sscanf(row, "%d %d%n", &c, &p, &offset) ) {
+	while( sscanf(row, "%d %d%n", &c, &p, &offset)!=EOF) {
 		temp = CreateNode(c, p);
-		InsertAtEnd(&polynom, temp);
+		InsertAtHead(&polynom, temp);
+		SortNode(&polynom, temp);
 		row = row + offset;
 	}
 
@@ -102,24 +105,22 @@ node* AllocateNode()
 		return Temp;
 }
 
-int InsertAtEnd(node** head, node* new)
+int InsertAtHead(node** head, node* new)
 {
-	node* temp = *head;
 	if(*head == NULL) {
 		*head = new;
 		return 0;
 	}
-	while (temp->next != NULL)
-		temp = temp->next;
-	temp->next = new;
-
-	if(temp) return 0;
+	new->next=(*head);
+	(*head)=new;
+	
+	if(*head) return 0;
 	else return -1;
 }
 
 int printPolynom (node* head) {
 	node* temp = head->next;
-	if(head == NULL) {
+	if(head == NULL) {                          //head->next?
 		printf("Error: prazna lista!");
 		return -1;
 	}
@@ -134,6 +135,26 @@ int printPolynom (node* head) {
 	}
 
 	return 0;
+}
+
+int SortNode(node** head, node* temp)
+{
+    node* TempNode = (*head)->next;
+    while(TempNode!=NULL)
+    {
+        if(temp->data.power>TempNode->data.power) SwapNodes(TempNode,temp);
+        TempNode=TempNode->next;
+        temp=temp->next;
+    }
+    return 0;
+}
+
+int SwapNodes(node* TempNode, node* SortNode)
+{
+    member Temp = TempNode->data;
+    TempNode->data = SortNode->data;
+    SortNode->data = Temp;
+    return 0;
 }
 
 /*
