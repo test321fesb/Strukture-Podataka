@@ -30,15 +30,24 @@ node* CreateNode (int c, int p);
 node* CreatePolynom(char*);
 
 int InsertAtHead (node** head, node* new);
+int InsertAtEnd (node** head, node* new);
 
 int printPolynom (node*);
+
+node sumOfPolynoms (node, node);
+
+int SortNode(node**, node*);
+
+int FindGreatestPower (node** head);
+
+node MergeInsidePolynom(node*);
 
 int main()
 {
 	FILE *ulz = NULL;
 	char row[ROW_MAX];
 
-	node HeadP1, HeadP2;
+	node HeadP1, HeadP2, HeadSum, HeadProduct;
 	HeadP1.next = NULL;
 	HeadP2.next = NULL;
 
@@ -60,6 +69,11 @@ int main()
 	HeadP2.next = CreatePolynom(row);
 	printPolynom(&HeadP2);
 
+	printf("\nZbroj\n");
+	HeadSum = sumOfPolynoms(HeadP1, HeadP2);
+	printPolynom(&HeadSum);
+
+
 
 	return 0;
 }
@@ -70,7 +84,7 @@ node* CreatePolynom(char* row)
 	node* temp = NULL;
 	node* polynom = NULL;
 
-	while( sscanf(row, "%d %d%n", &c, &p, &offset)!=EOF) {
+	while( sscanf(row, "%d %d%n", &c, &p, &offset) != EOF) {
 		temp = CreateNode(c, p);
 		InsertAtHead(&polynom, temp);
 		SortNode(&polynom, temp);
@@ -113,8 +127,23 @@ int InsertAtHead(node** head, node* new)
 	}
 	new->next=(*head);
 	(*head)=new;
-	
+
 	if(*head) return 0;
+	else return -1;
+}
+
+int InsertAtEnd(node** head, node* new)
+{
+	node* temp = *head;
+	if(*head == NULL) {
+		*head = new;
+		return 0;
+	}
+	while (temp->next != NULL)
+		temp = temp->next;
+	temp->next = new;
+
+	if(temp) return 0;
 	else return -1;
 }
 
@@ -125,7 +154,6 @@ int printPolynom (node* head) {
 		return -1;
 	}
 
-	printf("\nPolinom: ");
 	while (temp != NULL)
 	{
 		printf("%dx^%d", temp->data.coefficient, temp->data.power);
@@ -140,11 +168,12 @@ int printPolynom (node* head) {
 int SortNode(node** head, node* temp)
 {
     node* TempNode = (*head)->next;
-    while(TempNode!=NULL)
+    while(TempNode != NULL)
     {
-        if(temp->data.power>TempNode->data.power) SwapNodes(TempNode,temp);
-        TempNode=TempNode->next;
-        temp=temp->next;
+        if(temp->data.power > TempNode->data.power)
+					SwapNodes(TempNode,temp);
+        TempNode = TempNode->next;
+        temp = temp->next;
     }
     return 0;
 }
@@ -155,6 +184,60 @@ int SwapNodes(node* TempNode, node* SortNode)
     TempNode->data = SortNode->data;
     SortNode->data = Temp;
     return 0;
+}
+
+node sumOfPolynoms (node HeadP1, node HeadP2) {
+	int c1 = 0, c2 = 0, i = 0;
+	node* temp = NULL;
+	node* polynom = &HeadP1;
+	InsertAtEnd(&polynom, HeadP2.next);
+	node polynom2 = *polynom;
+	polynom2 = MergeInsidePolynom(&polynom2);
+	return polynom2;
+
+}
+
+node MergeInsidePolynom (node* head)
+{
+	int x = FindGreatestPower(&head);
+	int i = 0;
+	int c = 0;
+	node* temp = head;
+	node* new = NULL;
+	node* polynom = NULL;
+
+	for(i=0; i<=x; i++)
+	{
+		while(temp != NULL) {
+			if(temp->data.power == i)
+				c = c + temp->data.coefficient;
+
+			temp = temp->next;
+		}
+		new = CreateNode(c, i);
+		InsertAtHead(&polynom, new);
+		printf("\n------------\nINSIDE: ");
+		printPolynom(polynom);
+		printf("\n------------\n");
+
+		temp = head;
+		c = 0;
+	}
+
+	return *polynom;
+}
+
+int FindGreatestPower (node** head)
+{
+	node* temp = (*head)->next;
+	int x = 0;
+	while(temp != NULL)
+	{
+		if(temp->data.power > x)
+			x = temp->data.power;
+		temp = temp->next;
+	}
+	return x;
 }
 
 /*
