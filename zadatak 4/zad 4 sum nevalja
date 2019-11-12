@@ -29,6 +29,8 @@ node* CreatePolynom(char*);
 
 int InsertAtHead(node**, node*);
 
+int InsertAtEnd(node**, node*);
+
 int printPolynom(node*);
 
 
@@ -199,10 +201,7 @@ node* PolynomSum(node* Head1,node *Head2)
     node* polynom = NULL;
     
     while(TempHead1!=NULL){
-        TempHead1=TempHead1->next;
         while(TempHead2!=NULL){
-            
-        TempHead2=TempHead2->next;
             
             node* Temp = NULL;
             
@@ -247,6 +246,9 @@ node* DuplicateNode(node* TempCopy)
 {
     int c = 0, p = 0;
     node* TempPaste = AllocateNode();
+    
     TempPaste->data=TempCopy->data;
+	TempPaste->next = NULL;
+	
     return TempPaste;
 }
