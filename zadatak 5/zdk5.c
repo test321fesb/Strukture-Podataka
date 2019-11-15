@@ -17,9 +17,10 @@ int DataInput (node*);
 int SortNode (node**,node*);
 int CompareNodes (node*, node*);
 int PrintList (node*);
+node* IDontKnow(node*, node*);
 node* Conjunction(node*, node*);
 node* Disjunction(node*, node*);
-int AddNode(node*, node*, node*);
+int AddNode(node**, node*);
 
 int main()
 {
@@ -41,10 +42,10 @@ int main()
 	
 	printf("\nKonjunkcija: \n\n");
 	PrintList(LK.next);
-	/*
+	
 	printf("\nDisjunkcija: \n\n");
 	PrintList(LD.next);
-	*/
+	
 	return 0;
 }
 
@@ -118,6 +119,7 @@ int DataInput(node* temp)
 
 int SortNode(node** head, node* temp)
 {
+    int input = 0;
     node* tempNode = (*head);
     node* tempTarget = NULL;
     if((*head)==NULL)
@@ -127,12 +129,13 @@ int SortNode(node** head, node* temp)
     }
     while(tempNode!=NULL)
     {
-        if(CompareNodes(temp,tempNode)==1)
+        input = CompareNodes(temp,tempNode);
+        if(input==1)
         {
             tempTarget = tempNode;
             tempNode=tempNode->next;
         }
-        else if(CompareNodes(temp,tempNode)==0) return 2;
+        else if(input==0) return 2;
         else
         {
             if(tempNode==(*head)) InsertAtHead(head,temp);
@@ -162,49 +165,89 @@ int PrintList(node* head)
     return 0;
 }
 
-node* Conjunction(node* head1, node* head2)
+node* IDontKnow(node* head1, node* head2)
 {
+    int input = 0;
     node* head = NULL;
-    node* temp = NULL;
     node* tempNode1 = head1;
     node* tempNode2 = head2;
     
-    while(tempNode1!=NULL || tempNode2!=NULL)
+    while(tempNode1!=NULL && tempNode2!=NULL)
     {
-        if(CompareNodes(tempNode1,tempNode2)==1)
+        input = CompareNodes(tempNode1,tempNode2);
+        if(input==1)
         {
-            AddNode(head,temp,tempNode2);
+            AddNode(&head,tempNode2);
+            tempNode2 = tempNode2->next;
         }
-        else if(CompareNodes(tempNode1,tempNode2)==0)
+        else if(input==0)
         {
             tempNode1 = tempNode1->next;
             tempNode2 = tempNode2->next;
         }
         else {
-            AddNode(head,temp,tempNode1);
+            AddNode(&head,tempNode1);
+            tempNode1 = tempNode1->next;
         }
     }
     if(tempNode1 == NULL)
-        while(tempNode2!=NULL)
-            AddNode(head,temp,tempNode2);
+        while(tempNode2!=NULL){
+            AddNode(&head,tempNode2);
+            tempNode2 = tempNode2->next;
+        }
+            
     if(tempNode2 == NULL)
-        while(tempNode1!=NULL)
-            AddNode(head,temp,tempNode1);
+        while(tempNode1!=NULL){
+            AddNode(&head,tempNode1);
+            tempNode1 = tempNode1->next;
+        }
     
-    return NULL;
+    return head;
     
+}
+
+node* Conjunction(node* head1, node* head2)
+{
+    int input = 0;
+    node* head = NULL;
+    node* tempNode1 = head1;
+    node* tempNode2 = head2;
+    while(tempNode1 != 0 && tempNode2 != 0)
+    {
+        input = CompareNodes(tempNode1,tempNode2);
+        if(input == 1) tempNode2 = tempNode2->next;
+        else if(input == -1) tempNode1 = tempNode1->next;
+        else{
+            AddNode(&head,tempNode1);
+            tempNode1 = tempNode1->next;
+            tempNode2 = tempNode2->next;
+        }
+    }
+    return head;
 }
 
 node* Disjunction(node* head1, node* head2)
 {
-    return NULL;
+    node* head = NULL;
+    node* tempNode1 = head1;
+    node* tempNode2 = head2;
+    while(tempNode1 != 0)
+    {
+        AddNode(&head,tempNode1);
+        tempNode1 = tempNode1->next;
+    }
+    while(tempNode2 != 0)
+    {
+        SortNode(&head,tempNode2);
+        tempNode2 = tempNode2->next;
+    }
+    return head;
 }
 
-int AddNode(node* head, node* temp, node* tempNode)
+int AddNode(node** head, node* tempNode)
 {
-    temp = CreateNode();
+    node* temp = CreateNode();
     temp->data = tempNode->data;
-    InsertAtEnd(&head,temp);
-    tempNode = tempNode->next;
+    InsertAtEnd(head,temp);
     return 0;
 }
