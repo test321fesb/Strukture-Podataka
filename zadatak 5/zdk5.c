@@ -33,19 +33,19 @@ int main()
 	L2.next = InputList();
 	LK.next = Conjunction(L1.next,L2.next);
 	LD.next = Disjunction(L1.next,L2.next);
-	
+
 	printf("\nPrva Lista:\n\n");
     PrintList(L1.next);
-    
+
 	printf("\nDruga Lista:\n\n");
 	PrintList(L2.next);
-	
+
 	printf("\nKonjunkcija: \n\n");
 	PrintList(LK.next);
-	
+
 	printf("\nDisjunkcija: \n\n");
 	PrintList(LD.next);
-	
+
 	return 0;
 }
 
@@ -61,7 +61,7 @@ node* InputList()
 	{
 	    node* temp = CreateNode();
 	    DataInput(temp);
-		SortNode(&head, temp);
+		InsertAtEnd(&head, temp);
 	}
 	return head;
 }
@@ -98,7 +98,7 @@ int InsertAtLocation(node* location,node* temp)
     return 0;
 }
 
-node* CreateNode() 
+node* CreateNode()
 {
 	node* temp = (node*)malloc(sizeof(node));
 	if (temp == NULL)
@@ -124,7 +124,7 @@ int SortNode(node** head, node* temp)
     node* tempTarget = NULL;
     if((*head)==NULL)
     {
-        InsertAtHead(head,temp);
+        InsertAtEnd(head,temp);
         return 3;
     }
     while(tempNode!=NULL)
@@ -138,7 +138,7 @@ int SortNode(node** head, node* temp)
         else if(input==0) return 2;
         else
         {
-            if(tempNode==(*head)) InsertAtHead(head,temp);
+            if(tempNode==(*head)) InsertAtEnd(head,temp);
             else InsertAtLocation(tempTarget,temp);
             return 1;
         }
@@ -171,7 +171,7 @@ node* IDontKnow(node* head1, node* head2)
     node* head = NULL;
     node* tempNode1 = head1;
     node* tempNode2 = head2;
-    
+
     while(tempNode1!=NULL && tempNode2!=NULL)
     {
         input = CompareNodes(tempNode1,tempNode2);
@@ -195,15 +195,15 @@ node* IDontKnow(node* head1, node* head2)
             AddNode(&head,tempNode2);
             tempNode2 = tempNode2->next;
         }
-            
+
     if(tempNode2 == NULL)
         while(tempNode1!=NULL){
             AddNode(&head,tempNode1);
             tempNode1 = tempNode1->next;
         }
-    
+
     return head;
-    
+
 }
 
 node* Conjunction(node* head1, node* head2)
