@@ -1,0 +1,121 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct _node* position;
+typedef struct _node {
+	int data;
+	position next;
+} node;
+
+node* FillList();
+
+node* CreateNode(int);
+
+int InsertAtEnd(position head, position n);
+
+int PrintList(position head);
+
+int ExistsIn(position n, position head);
+
+int main() {
+	node L1, L2, LU, LI;
+	L1.next = NULL;
+	L2.next = NULL;
+	LU.next = NULL;
+	LI.next = NULL;
+
+	L1.next = FillList();
+	L2.next = FillList();
+
+	printf("\nPrva lista:\n");
+	PrintList(L1.next);
+
+	printf("\nDruga lista:\n");
+	PrintList(L2.next);
+
+	return 0;
+}
+
+node* FillList() {
+	int i=0, x=0, broj;
+	node head;
+	head.next = NULL;
+	position temp = NULL;
+
+	printf("\nBroj clanova?\n");
+	scanf("%d", &x);
+	
+	for(i=0; i<x; i++) {
+		scanf("%d", &broj);
+
+		if( ExistsIn(broj, head) ) {
+			continue;
+		}
+		else {
+			temp = CreateNode(broj); 
+			InsertAtEnd(head, temp);
+		}
+	}
+
+}
+
+int InsertAtEnd(position head, position n) {
+	position temp = head;
+
+	if(head == NULL) {
+		head = n;
+		return 0;
+	}
+
+	while(temp->next != NULL) {
+		temp = temp->next;
+	}
+
+	temp->next = n;
+
+	PrintList(head->next);
+	return 0;
+}
+
+
+int PrintList(position head) {
+	position temp = head;
+
+	if(head == NULL) {
+		printf("Lista je prazna.");
+	}
+
+	while(temp != NULL) {
+		printf("%d ", temp->data);
+		temp = temp->next;
+	}
+
+	return 0;
+
+}
+
+node* CreateNode(int broj) {
+	position temp = (position)malloc(sizeof(node));
+	if(temp) {
+		temp->data = broj;
+		temp->next = NULL;
+	}
+	else {
+		printf("Error memory");
+		return NULL;
+	}
+	return temp;
+}
+
+int ExistsIn(int x, position head) {
+	position temp = head;
+	while(temp != NULL) {
+		if(temp->data == x){
+			return 1;
+		}
+		temp = temp->next;
+	}
+	return 0;
+}
