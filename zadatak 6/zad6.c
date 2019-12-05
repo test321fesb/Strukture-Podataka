@@ -33,7 +33,7 @@ int main()  {
   scanf("%d", &n);
 
   for(i=0; i<n; i++) {
-    a = randomNumber();
+    a = 10 + randomNumber();
     enQueue(&Queue, a);
     push(&Stack, a);
   }
@@ -123,7 +123,7 @@ Position top(Node* head) {
 }
 
 int randomNumber() {
-    return rand()%1000;
+    return rand()%90;
 }
 
 int printList(Position head) {
