@@ -102,9 +102,9 @@ int postfiksCalculator(char* postfiks, Position head)
         sscanf(postfiks,"%s %n",check,&n);
         postfiks = postfiks + n;
         
-        if(strcmp(check,"+")==0) case1(head);
-        else if(strcmp(check,"*")==0) case2(head);
-        else case3(head,check);
+        if(strcmp(check,"+")==0) caseSum(head);
+        else if(strcmp(check,"*")==0) caseProd(head);
+        else caseInt(head,check);
         
     } while(n != 1);
     
