@@ -111,7 +111,7 @@ int postfiksCalculator(char* postfiks, Position head)
     return (head->next->data);
 }
 
-int case1(Position head)
+int caseSum(Position head)
 {
     int tempVar = 0;
     tempVar+=head->next->data;
@@ -122,7 +122,7 @@ int case1(Position head)
     return 0;
 }
 
-int case2(Position head)
+int caseProd(Position head)
 {
     int tempVar = 1;
     tempVar*= head->next->data;
@@ -133,7 +133,7 @@ int case2(Position head)
     return 0;
 }
 
-int case3(Position head, char* check)
+int caseInt(Position head, char* check)
 {
     int checkInt = 0;
     sscanf(check,"%d",&checkInt);
