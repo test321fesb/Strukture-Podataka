@@ -17,9 +17,9 @@ Position CreateNode(int x);
 int printStack(Position head);
 char* readFile();
 int postfiksCalculator(char*, Position);
-int case1(Position);
-int case2(Position);
-int case3(Position,char*);
+int caseSum(Position);
+int caseProd(Position);
+int caseInt(Position,char*);
 
 int main() {
 	Node head;
