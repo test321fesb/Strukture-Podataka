@@ -1,0 +1,87 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#define buffer (4)
+
+typedef struct _Stack
+{
+	char data[buffer];
+	struct _Stack* next;
+} Stack;
+typedef struct _Stack* SPosition;
+
+typedef struct _Node
+{
+	char data[buffer];
+	struct _Node* left;
+	struct _Node* right;
+} Node;
+typedef struct _Node* Position;
+
+typedef struct _Main
+{
+	SPosition headNode;
+	Position treeRoot;
+} Main;
+typedef struct _Main* Master;
+
+int main() 
+{
+	Stack stackHead;
+	stackHead.next = NULL;
+
+	Node rootNode;
+	rootNode.left = NULL;
+	rootNode.right = NULL;
+
+	Main head;
+	head.headNode = &stackHead;
+	head.treeRoot = &rootNode;
+
+
+
+	return 0;
+}
+
+SPosition CreateStack(char data[buffer])
+{
+	SPosition temp = (SPosition)malloc(sizeof(Stack));
+	if (temp == NULL)
+	{
+		printf("\n\terror neki\n");
+		return NULL;
+	}
+	else
+	{
+		temp->next = NULL;
+		strcpy(temp->data, data);
+		return temp;
+	}
+
+}
+
+int Push(Master head, SPosition current)
+{
+	if (head->headNode == NULL)
+	{
+		head->headNode = current;
+		return 0;
+	}
+	else
+	{
+		current->next = head->headNode->next;
+		head->headNode->next = current;
+		return 0;
+	}
+}
+
+char* Pop(Master head)
+{
+	SPosition temp = head->headNode;
+	char* data = (char*)malloc(buffer * sizeof(char));
+	strcpy(data, head->headNode->data);
+	head->headNode = head->headNode->next;
+	free(temp);
+	return data;
+}
