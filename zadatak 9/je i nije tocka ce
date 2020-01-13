@@ -42,10 +42,6 @@ int main()
 	node.right = NULL;
 	node.data = 0;
 
-	Queue red;
-	red.next = NULL;
-
-	root.queue = &red;
 	root.rootNode = &node;
 
 	Start(&root);
