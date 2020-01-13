@@ -12,16 +12,8 @@ typedef struct _Node
 } Node;
 typedef struct _Node* Position;
 
-typedef struct _Queue
-{
-	Position nodeP;
-	struct _Queue* next;
-} Queue;
-typedef struct _Queue* QPosition;
-
 typedef struct _Main
 {
-	QPosition queue;
 	Position rootNode;
 	Position current;
 } Main;
@@ -35,8 +27,6 @@ int Start(head);
 int Menu();
 int PrintStart(head);
 int PrintTree(Position, int*);
-int Pop(head);
-int Push(Position, head);
 int Find(head);
 int Delete(head);
 Position ReconnectBranch(Position, int);
@@ -117,22 +107,6 @@ Position CreateNode(int var)
 		return temp;
 	}
 	return NULL;
-}
-
-QPosition CreateQueue(Position curr)
-{
-	QPosition temp = (QPosition)malloc(sizeof(Queue));
-	if (temp == NULL)
-	{
-		printf("\n\tAllocation Error!\n");
-		return NULL;
-	}
-	else
-	{
-		temp->next = NULL;
-		temp->nodeP = curr;
-		return temp;
-	}
 }
 
 int CreateEl(Position temp, int var)
@@ -217,24 +191,6 @@ Position FindLowestNumber(Position temp)
 	if (temp->left == NULL) return temp;
 	else FindLowestNumber(temp->left);
 	return temp;
-}
-
-int Push(Position NewCurrent, head root)
-{
-	QPosition temp = CreateQueue(NewCurrent);
-	temp->next = root->queue->next;
-	root->queue->next = temp;
-	return 0;
-}
-
-int Pop(head root)
-{
-	QPosition temp = NULL;
-	root->current = root->queue->next->nodeP;
-	temp = root->queue->next;
-	root->queue->next = root->queue->next->next;
-	free(temp);
-	return 0;
 }
 
 int PrintStart(head root)
