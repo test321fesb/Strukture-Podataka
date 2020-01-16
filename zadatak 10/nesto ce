@@ -2,18 +2,20 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define buffer (4)
+#define max (64)
+#define mid (32)
+#define min (4)
 
 typedef struct _Stack
 {
-	char data[buffer];
+	struct _Node* nodeData;
 	struct _Stack* next;
 } Stack;
 typedef struct _Stack* SPosition;
 
 typedef struct _Node
 {
-	char data[buffer];
+	char data[min];
 	struct _Node* left;
 	struct _Node* right;
 } Node;
@@ -27,9 +29,21 @@ typedef struct _Main
 typedef struct _Main* Master;
 
 
-int printneki();
+int Start(Master);
+int ReadLine(char*, Master);
+int SymbolHandler(char[min], Master);
+int PopTwo(Master, SPosition);
+int CreateFile(char[mid]);
+char* ReadFile(char[mid]);
+Position CreateNode(char[min]);
+SPosition CreateStack(Position);
+int Push(Master, SPosition);
+Position Pop(Master);
+int PrintFile(Master);
+char* ClimbBranches(Position, char*);
 
-int main() 
+
+int main()
 {
 	Stack stackHead;
 	stackHead.next = NULL;
@@ -42,13 +56,148 @@ int main()
 	head.headNode = &stackHead;
 	head.treeRoot = &rootNode;
 
-	printneki();
+	Start(&head);
 
 	system("pause");
 	return 0;
 }
 
-SPosition CreateStack(char data[buffer])
+int Start(Master head)		// start da main ne bude dug
+{
+	char filename[mid] = "postfiks.txt";
+	char* line;
+	CreateFile(filename);
+
+	printf("\n\tfile created\n");
+	line = ReadFile(filename);
+
+	printf("\n\tline created\n");
+	ReadLine(line, head);
+	head->treeRoot = head->headNode->nodeData;
+
+	PrintFile(head);
+
+	printf("\n\tdone\n\n");
+
+	return 0;
+}
+
+int ReadLine(char* line, Master head)
+{
+	int n = 0;
+	char symbol[min];
+	do {
+		sscanf(line, "%s %n", symbol, &n);
+		line = line + n;
+		SymbolHandler(symbol, head);
+	} while (n != 1);
+	return 0;
+}
+
+int SymbolHandler(char symbol[min], Master head)
+{
+	Position node = CreateNode(symbol);
+	SPosition temp = CreateStack(node);
+	int input = strcmp("+", symbol);
+	switch(input)
+	{
+	case 0:	
+	case 1:
+		PopTwo(head, temp);
+		break;
+
+	default:
+		Push(head, temp);
+		break;
+	}
+	return 0;
+}
+
+int PopTwo(Master head, SPosition temp)
+{
+	Position temp1 = Pop(head);
+	Position temp2 = Pop(head);
+	temp->nodeData->right = temp1;
+	temp->nodeData->left = temp2;
+	Push(head, temp);
+	return 0;
+}
+
+
+int CreateFile(char filename[mid])   // neda mi se radit file
+{
+	char* line = (char*)malloc(max * sizeof(char));
+	FILE* ulz;
+	ulz = fopen(filename, "w");
+	line = "5 2 * 6 + 4 2 * +";
+	fprintf(ulz, "%s", line);
+	fclose(ulz);
+	return 0;
+}
+
+char* ReadFile(char filename[mid])		// uzima prvi red iz filea
+{
+	FILE* ulz;
+	ulz = fopen(filename, "r");
+	char* line = (char*)malloc(max * sizeof(char));
+	fgets(line, max, ulz);
+	fclose(ulz);
+	return line;
+}
+
+int PrintFile(Master head)
+{
+	FILE* ulz;
+	ulz = fopen("onajdrugi.txt", "w");
+	Position temp = head->treeRoot;
+	char infix[max] = "";
+	ClimbBranches(temp, infix);
+	char* str = infix;
+	str[strlen(str) - 2] = '\0';
+	str = str + 3;
+	printf("\n\t\t\t%s\n", str);
+	fprintf(ulz, "%s", str);
+	fclose(ulz);
+	return 0;
+}
+
+char* ClimbBranches(Position temp, char* infix)
+{
+	if (temp->left != NULL)
+	{
+		strcat(infix, "( ");
+		ClimbBranches(temp->left, infix);
+		strcat(infix, temp->data);
+		strcat(infix, " ");
+		ClimbBranches(temp->right, infix);
+		strcat(infix, ") ");
+	}
+	else
+	{
+		strcat(infix, temp->data);
+		strcat(infix, " ");
+	}
+	return infix;
+}
+
+Position CreateNode(char data[min])
+{
+	Position temp = (Position)malloc(sizeof(Node));
+	if (temp == NULL)
+	{
+		printf("\n\terror neki");
+		return NULL;
+	}
+	else
+	{
+		temp->left = NULL;
+		temp->right = NULL;
+		strcpy(temp->data, data);
+		return temp;
+	}
+}
+
+SPosition CreateStack(Position node)		//	alocira 1 clan stacka
 {
 	SPosition temp = (SPosition)malloc(sizeof(Stack));
 	if (temp == NULL)
@@ -59,13 +208,12 @@ SPosition CreateStack(char data[buffer])
 	else
 	{
 		temp->next = NULL;
-		strcpy(temp->data, data);
+		temp->nodeData = node;
 		return temp;
 	}
-
 }
 
-int Push(Master head, SPosition current)
+int Push(Master head, SPosition current)		//	stavlja na stack
 {
 	if (head->headNode == NULL)
 	{
@@ -74,94 +222,16 @@ int Push(Master head, SPosition current)
 	}
 	else
 	{
-		current->next = head->headNode->next;
-		head->headNode->next = current;
+		current->next = head->headNode;
+		head->headNode = current;
 		return 0;
 	}
 }
 
-char* Pop(Master head)
+Position Pop(Master head)		//	uzima sa stacka i vraca node (position)
 {
 	SPosition temp = head->headNode;
-	char* data = (char*)malloc(buffer * sizeof(char));
-	strcpy(data, head->headNode->data);
+	Position node = head->headNode->nodeData;
 	head->headNode = head->headNode->next;
-	free(temp);
-	return data;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-int printneki()
-{
-	printf("\n________$$$$_______________\n"
-		"_______$$__$_______________\n"
-		"_______$___$$______________\n"
-		"_______$___$$______________\n"
-		"_______$$___$$_____________\n"
-		"________$____$$____________\n"
-		"________$$____$$$__________\n"
-		"_________$$_____$$_________\n"
-		"_________$$______$$________\n"
-		"__________$_______$$_______\n"
-		"____$$$$$$$________$$______\n"
-		"__$$$_______________$$$$$$\n"
-		"_$$____$$$$____________$$$\n"
-		"_$___$$$__$$$____________$$\n"
-		"_$$________$$$____________$\n"
-		"__$$____$$$$$$____________$\n"
-		"__$$$$$$$____$$___________$\n"
-		"__$$_______$$$$___________$\n"
-		"___$$$$$$$$$__$$_________$$\n"
-		"____$________$$$$_____$$$$\n"
-		"____$$____$$$$$$____$$$$$$\n"
-		"_____$$$$$$____$$__$$\n"
-		"_______$_____$$$_$$$\n"
-		"________$$$$$$$$$$\n\n");
-	return 0;
+	return node;
 }
